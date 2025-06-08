@@ -1,5 +1,6 @@
 const senderInput = document.getElementById("sender-input");
-const avatarInput = document.getElementById("avatar-input");
+const avatarFileInput = document.getElementById("avatar-file-input");
+const avatarUrlInput = document.getElementById("avatar-url-input");
 const messageTextInput = document.getElementById("message-text-input");
 const addMessageBtn = document.getElementById("add-message-btn");
 const messagesListDiv = document.getElementById("messages-list");
@@ -10,7 +11,17 @@ const errorMsg = document.getElementById("error-msg");
 
 let messages = [];
 
-// Get initials from sender name if no avatar provided
+// Convert file input to data URL
+function fileToDataURL(file) {
+  return new Promise((resolve, reject) => {
+    if (!file) resolve(null);
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(new Error("Failed to read file"));
+    reader.readAsDataURL(file);
+  });
+}
+
 function getInitials(name) {
   if (!name) return "?";
   const parts = name.trim().split(" ");
@@ -18,7 +29,6 @@ function getInitials(name) {
   return (parts[0][0] + parts[1][0]).toUpperCase();
 }
 
-// Render the messages list in the input section with remove buttons
 function renderMessagesList() {
   messagesListDiv.innerHTML = "";
 
@@ -64,7 +74,6 @@ function renderMessagesList() {
   errorMsg.textContent = "";
 }
 
-// Render chat messages in the chat container
 function renderChat(messagesArray) {
   chatContainer.innerHTML = ""; // Clear previous
 
@@ -78,12 +87,11 @@ function renderChat(messagesArray) {
     const avatarEl = document.createElement("div");
     avatarEl.className = "avatar";
 
-    if (avatar && avatar.trim()) {
+    if (avatar) {
       const img = document.createElement("img");
       img.src = avatar;
       img.alt = `${sender}'s avatar`;
       img.onerror = () => {
-        // fallback to initials if image fails to load
         avatarEl.textContent = getInitials(sender);
       };
       avatarEl.appendChild(img);
@@ -118,10 +126,11 @@ function renderChat(messagesArray) {
   });
 }
 
-addMessageBtn.addEventListener("click", () => {
+addMessageBtn.addEventListener("click", async () => {
   const sender = senderInput.value.trim();
-  const avatar = avatarInput.value.trim();
   const text = messageTextInput.value.trim();
+  const avatarFile = avatarFileInput.files[0];
+  const avatarUrl = avatarUrlInput.value.trim();
 
   if (!sender) {
     errorMsg.textContent = "Sender name cannot be empty.";
@@ -131,13 +140,29 @@ addMessageBtn.addEventListener("click", () => {
     errorMsg.textContent = "Message text cannot be empty.";
     return;
   }
+
   errorMsg.textContent = "";
 
-  messages.push({ sender, avatar, text });
+  let avatar = null;
 
-  // Clear inputs except avatar (maybe reused)
+  if (avatarFile) {
+    try {
+      avatar = await fileToDataURL(avatarFile);
+    } catch (e) {
+      errorMsg.textContent = "Failed to load avatar image file.";
+      return;
+    }
+  } else if (avatarUrl) {
+    avatar = avatarUrl;
+  }
+
+  messages.push({ sender, text, avatar });
+
+  // Clear inputs (but keep avatar URL, optional)
   senderInput.value = "";
   messageTextInput.value = "";
+  avatarFileInput.value = "";
+  // avatarUrlInput.value = ""; // keep URL in case user wants to reuse
 
   renderMessagesList();
 });
@@ -153,7 +178,7 @@ generateBtn.addEventListener("click", () => {
 });
 
 downloadBtn.addEventListener("click", () => {
-  html2canvas(chatContainer).then((canvas) => {
+  html2canvas(chatContainer, {backgroundColor: null}).then((canvas) => {
     const link = document.createElement("a");
     link.download = "fake-discord-chat.png";
     link.href = canvas.toDataURL("image/png");
