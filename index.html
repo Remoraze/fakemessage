@@ -21,18 +21,30 @@
           id="sender-input"
           placeholder="Sender Name (e.g. You, Alice)"
           aria-label="Sender Name"
+          required
         />
+
         <input
-          type="url"
-          id="avatar-input"
-          placeholder="Avatar Image URL (optional)"
+          type="file"
+          id="avatar-file-input"
+          accept="image/*"
+          aria-label="Upload Avatar Image"
+          title="Upload Avatar Image (optional)"
+        />
+        
+        <input
+          type="text"
+          id="avatar-url-input"
+          placeholder="Or Avatar Image URL (optional)"
           aria-label="Avatar Image URL"
         />
+
         <input
           type="text"
           id="message-text-input"
           placeholder="Enter message text"
           aria-label="Message Text"
+          required
         />
         <button id="add-message-btn" title="Add message">Add Message</button>
       </div>
