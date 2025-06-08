@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" >
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -16,10 +16,18 @@
   <main>
     <section class="input-section">
       <div class="add-message-form">
-        <select id="sender-select" aria-label="Sender">
-          <option value="You">You</option>
-          <option value="Them">Them</option>
-        </select>
+        <input
+          type="text"
+          id="sender-input"
+          placeholder="Sender Name (e.g. You, Alice)"
+          aria-label="Sender Name"
+        />
+        <input
+          type="url"
+          id="avatar-input"
+          placeholder="Avatar Image URL (optional)"
+          aria-label="Avatar Image URL"
+        />
         <input
           type="text"
           id="message-text-input"
