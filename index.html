@@ -3,26 +3,42 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Fake Discord Messages</title>
+  <title>Fake Discord DM Generator</title>
   <link rel="stylesheet" href="styles.css" />
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 </head>
 <body>
 
   <header>
-    <h1>FakeMessage</h1>
+    <h1>Fake Discord DM Generator</h1>
   </header>
 
   <main>
     <section class="input-section">
-      <label for="messages-input">Paste message array (JSON):</label>
-      <textarea id="messages-input" placeholder='[{"sender":"You","text":"Hey"},{"sender":"Them","text":"Yo"}]' rows="6"></textarea>
-      <button id="generate-btn">Generate Chat</button>
+      <div class="add-message-form">
+        <select id="sender-select" aria-label="Sender">
+          <option value="You">You</option>
+          <option value="Them">Them</option>
+        </select>
+        <input
+          type="text"
+          id="message-text-input"
+          placeholder="Enter message text"
+          aria-label="Message Text"
+        />
+        <button id="add-message-btn" title="Add message">Add Message</button>
+      </div>
+
+      <div id="messages-list" class="messages-list" aria-live="polite" aria-atomic="true">
+        <!-- live list of added messages -->
+      </div>
+
+      <button id="generate-btn" disabled>Generate Chat</button>
       <button id="download-btn" disabled>Download Chat Image</button>
-      <p id="error-msg" class="error"></p>
+      <p id="error-msg" class="error" role="alert"></p>
     </section>
 
-    <section class="chat-section">
+    <section class="chat-section" aria-label="Chat messages">
       <div id="chat-container" class="chat-container">
         <!-- Chat messages get inserted here -->
       </div>
