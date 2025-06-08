@@ -11,7 +11,7 @@ const errorMsg = document.getElementById("error-msg");
 
 let messages = [];
 
-// Convert file input to data URL
+// Helper: Convert file input to base64 URL
 function fileToDataURL(file) {
   return new Promise((resolve, reject) => {
     if (!file) resolve(null);
@@ -22,6 +22,7 @@ function fileToDataURL(file) {
   });
 }
 
+// Helper: Get initials if no avatar
 function getInitials(name) {
   if (!name) return "?";
   const parts = name.trim().split(" ");
@@ -29,6 +30,7 @@ function getInitials(name) {
   return (parts[0][0] + parts[1][0]).toUpperCase();
 }
 
+// Render the list of added messages with remove buttons
 function renderMessagesList() {
   messagesListDiv.innerHTML = "";
 
@@ -74,6 +76,7 @@ function renderMessagesList() {
   errorMsg.textContent = "";
 }
 
+// Render the chat messages in Discord style
 function renderChat(messagesArray) {
   chatContainer.innerHTML = ""; // Clear previous
 
@@ -126,7 +129,10 @@ function renderChat(messagesArray) {
   });
 }
 
-addMessageBtn.addEventListener("click", async () => {
+// Add message event handler
+addMessageBtn.addEventListener("click", async (e) => {
+  e.preventDefault();
+
   const sender = senderInput.value.trim();
   const text = messageTextInput.value.trim();
   const avatarFile = avatarFileInput.files[0];
@@ -158,16 +164,18 @@ addMessageBtn.addEventListener("click", async () => {
 
   messages.push({ sender, text, avatar });
 
-  // Clear inputs (but keep avatar URL, optional)
+  // Clear inputs (but keep avatar URL for convenience)
   senderInput.value = "";
   messageTextInput.value = "";
   avatarFileInput.value = "";
-  // avatarUrlInput.value = ""; // keep URL in case user wants to reuse
 
   renderMessagesList();
 });
 
-generateBtn.addEventListener("click", () => {
+// Generate chat button event handler
+generateBtn.addEventListener("click", (e) => {
+  e.preventDefault();
+
   if (messages.length === 0) {
     errorMsg.textContent = "Add some messages first.";
     return;
@@ -177,8 +185,11 @@ generateBtn.addEventListener("click", () => {
   downloadBtn.disabled = false;
 });
 
-downloadBtn.addEventListener("click", () => {
-  html2canvas(chatContainer, {backgroundColor: null}).then((canvas) => {
+// Download chat image event handler
+downloadBtn.addEventListener("click", (e) => {
+  e.preventDefault();
+
+  html2canvas(chatContainer, { backgroundColor: null }).then((canvas) => {
     const link = document.createElement("a");
     link.download = "fake-discord-chat.png";
     link.href = canvas.toDataURL("image/png");
