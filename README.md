@@ -1,0 +1,2 @@
+# fakemessage
+Fakes Discord messages.
